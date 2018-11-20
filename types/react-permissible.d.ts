@@ -17,6 +17,12 @@ declare module '@brainhubeu/react-permissible' {
     renderOtherwise?: Children
   }
 
+  interface CheckPermissionsHandlerParams extends Partial<UserAndRequiredPermissions> {
+    oneperm?: boolean
+  }
+
+  export function checkPermissions({ userPermissions, requiredPermissions, oneperm }: CheckPermissionsHandlerParams): boolean
+
   export class PermissibleRender extends React.Component<PermissibleRenderProps> {
     checkPermissions(): boolean
   }

@@ -1,7 +1,8 @@
 import { Permissible } from './components/permissible';
-import { PermissibleRender } from './components/permissibleRender';
+import { checkPermissions, PermissibleRender } from './components/permissibleRender';
 
 export {
+  checkPermissions,
   Permissible,
   PermissibleRender,
 };
