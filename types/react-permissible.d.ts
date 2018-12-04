@@ -1,45 +1,45 @@
-import * as React from 'react'
+import { Component, ComponentState, ComponentType, ReactNode, ReactNodeArray, StaticLifecycle, ValidationMap, } from 'react';
 
 declare module '@brainhubeu/react-permissible' {
+  type Permissions = string[];
 
-  type Permissions = string[]
-
-  type Children = React.ReactNode | React.ReactNodeArray
+  type Children = ReactNode | ReactNodeArray;
 
   export interface UserAndRequiredPermissions {
     userPermissions: Permissions
     requiredPermissions: Permissions
   }
 
-  export interface PermissibleRenderProps extends UserAndRequiredPermissions {
+  interface OptionalOnePermission {
     oneperm?: boolean
+  }
+
+  export interface PermissibleRenderProps extends UserAndRequiredPermissions, OptionalOnePermission {
     children: Children
     renderOtherwise?: Children
   }
 
-  interface CheckPermissionsHandlerParams extends Partial<UserAndRequiredPermissions> {
-    oneperm?: boolean
-  }
+  interface CheckPermissionsHandlerParams extends Partial<UserAndRequiredPermissions>, OptionalOnePermission {}
 
-  export function checkPermissions({ userPermissions, requiredPermissions, oneperm }: CheckPermissionsHandlerParams): boolean
+  export function checkPermissions(CheckPermissionsHandlerParams): boolean
 
-  export class PermissibleRender extends React.Component<PermissibleRenderProps> {
+  export class PermissibleRender extends Component<PermissibleRenderProps> {
     checkPermissions(): boolean
   }
 
   export function Permissible<Props extends object, State extends object>(
-    RestrictedComponent: React.ComponentType<Props>,
+    RestrictedComponent: ComponentType<Props>,
     userPermissions: Permissions,
     requiredPermissions: Permissions,
     callbackFunction?: ({ userPermissions, requiredPermissions, }: UserAndRequiredPermissions) => void,
     oneperm?: boolean,
   ): PermissibleHOC<Props, State, { runCallback(): void }>
 
-  interface PermissibleHOC<Props = {}, State = React.ComponentState, TE = {}> extends React.StaticLifecycle<Props, State> {
-    new (props: Props, context?: any): React.Component<Props, State> & TE
-    propTypes?: React.ValidationMap<Props>
-    contextTypes?: React.ValidationMap<any>
-    childContextTypes?: React.ValidationMap<any>
+  interface PermissibleHOC<Props = object, State = ComponentState, TE = object> extends StaticLifecycle<Props, State> {
+    new (props: Props, context?: any): Component<Props, State> & TE
+    propTypes?: ValidationMap<Props>
+    contextTypes?: ValidationMap<any>
+    childContextTypes?: ValidationMap<any>
     defaultProps?: Partial<Props>
     displayName?: string
   }

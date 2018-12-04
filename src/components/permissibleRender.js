@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import intersection from 'lodash.intersection';
 import difference from 'lodash.difference';
 
-export function checkPermissions({ userPermissions, requiredPermissions, oneperm }){
+export function checkPermissions({ userPermissions, requiredPermissions, oneperm }) {
   if (oneperm) {
     return Boolean(intersection(userPermissions, requiredPermissions).length);
   }
