@@ -4,7 +4,7 @@ import chai from 'chai';
 import chaiEnzyme from 'chai-enzyme';
 import { JSDOM } from 'jsdom';
 
-import { PermissibleRender } from '../src/components/permissibleRender';
+import { checkPermissions, PermissibleRender } from '../src/components/permissibleRender';
 
 const should = chai.should();
 
@@ -183,5 +183,75 @@ describe('PermissibleRender', () => {
 
     const searchedElement = mountedComponent.find('ChildComponent');
     searchedElement.length.should.be.equal(0);
+  });
+});
+
+describe('Check Permissions', () => {
+  it('returns true if user permissions and required permissions are both empty', () => {
+    const params = {
+      userPermissions: [],
+      requiredPermissions: [],
+    };
+
+    const isPermitted = checkPermissions(params);
+
+    isPermitted.should.be.true;
+  });
+
+  it('returns true if only required permissions are empty', () => {
+    const params = {
+      userPermissions: ['SOME_PERMISSION'],
+      requiredPermissions: [],
+    };
+
+    const isPermitted = checkPermissions(params);
+
+    isPermitted.should.be.true;
+  });
+
+  it('returns false if there is a permission mismatch', () => {
+    const params = {
+      userPermissions: ['REQUIRED_PERMISSION'],
+      requiredPermissions: ['ANOTHER_PERMISSION'],
+    };
+
+    const isPermitted = checkPermissions(params);
+
+    isPermitted.should.be.false;
+  });
+
+  it('returns true if the user has required permission', () => {
+    const params = {
+      userPermissions: ['REQUIRED_PERMISSION'],
+      requiredPermissions: ['REQUIRED_PERMISSION'],
+    };
+
+    const isPermitted = checkPermissions(params);
+
+    isPermitted.should.be.true;
+  });
+
+  it('returns true if the user has one of necessary conditions when `oneperm` prop is defined', () => {
+    const params = {
+      userPermissions: ['ANOTHER_PERMISSION'],
+      requiredPermissions: ['REQUIRED_PERMISSION', 'ANOTHER_PERMISSION'],
+      oneperm: true,
+    };
+
+    const isPermitted = checkPermissions(params);
+
+    isPermitted.should.be.true;
+  });
+
+  it('returns false if the user doesn\'t have all of necessary permissions when `oneperm` prop is explicitly set to false', () => {
+    const params = {
+      userPermissions: ['REQUIRED_PERMISSION'],
+      requiredPermissions: ['REQUIRED_PERMISSION', 'ANOTHER_PERMISSION'],
+      oneperm: false,
+    };
+
+    const isPermitted = checkPermissions(params);
+
+    isPermitted.should.be.false;
   });
 });

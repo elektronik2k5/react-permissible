@@ -3,6 +3,14 @@ import PropTypes from 'prop-types';
 import intersection from 'lodash.intersection';
 import difference from 'lodash.difference';
 
+export function checkPermissions({ userPermissions, requiredPermissions, oneperm }) {
+  if (oneperm) {
+    return Boolean(intersection(userPermissions, requiredPermissions).length);
+  }
+
+  return difference(requiredPermissions, userPermissions).length === 0;
+}
+
 export class PermissibleRender extends Component {
   static propTypes = {
     oneperm: PropTypes.bool,
@@ -15,11 +23,7 @@ export class PermissibleRender extends Component {
   checkPermissions() {
     const { userPermissions, requiredPermissions, oneperm } = this.props;
 
-    if (oneperm) {
-      return intersection(userPermissions, requiredPermissions).length;
-    }
-
-    return difference(requiredPermissions, userPermissions).length === 0;
+    return checkPermissions({ userPermissions, requiredPermissions, oneperm });
   }
 
   render() {
